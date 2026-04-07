@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { run } from "@oclif/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { run } from "@oclif/core";
 import packageJson from "../package.json" with { type: "json" };
 import { logger } from "./logger.js";
 
