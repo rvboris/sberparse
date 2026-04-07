@@ -57,3 +57,15 @@ export interface CLIOptions {
   /** Сохранять промежуточный текстовый файл */
   interm: boolean;
 }
+
+/**
+ * Опции парсинга для использования в коде
+ */
+export interface ParseOptions {
+  /** Принудительный формат */
+  format?: string;
+  /** Обратный порядок транзакций */
+  reverse?: boolean;
+  /** Проверять баланс */
+  balance_check?: boolean;
+}

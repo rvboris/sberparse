@@ -14,21 +14,27 @@ interface JSONOutput {
   transactions: Array<Record<string, string | number | Date | undefined>>;
 }
 
+interface JsonRenderOptions {
+  version?: string;
+  generated_at?: string;
+  pretty?: boolean;
+}
+
 /**
- * Записывает транзакции в JSON файл
+ * Конвертирует транзакции в JSON строку
  * @param transactions Список транзакций
- * @param filename Имя файла (без расширения)
  * @param extractorName Имя экстрактора
  * @param errors Ошибки при конвертации
- * @returns Имя созданного файла
+ * @param options Параметры вывода
+ * @returns JSON строка
  */
-export async function writeTransactionsToJson(
+export function transactionsToJson(
   transactions: Transaction[],
-  filename: string,
   extractorName: string,
   errors: string,
-): Promise<string> {
-  const outputFilename = filename.endsWith(".json") ? filename : `${filename}.json`;
+  options: JsonRenderOptions = {},
+): string {
+  const { version = "1.0.0", generated_at = new Date().toISOString(), pretty = true } = options;
 
   // Конвертируем транзакции в сериализуемый формат
   const serializableTransactions = transactions.map((transaction) => {
@@ -46,15 +52,34 @@ export async function writeTransactionsToJson(
 
   const output: JSONOutput = {
     metadata: {
-      version: "1.0.0",
+      version,
       extractor: extractorName,
-      generated_at: new Date().toISOString(),
+      generated_at,
       errors: errors,
     },
     transactions: serializableTransactions,
   };
 
-  await fs.writeFile(outputFilename, JSON.stringify(output, null, 2), "utf-8");
+  return JSON.stringify(output, null, pretty ? 2 : 0);
+}
+
+/**
+ * Записывает транзакции в JSON файл
+ * @param transactions Список транзакций
+ * @param filename Имя файла (без расширения)
+ * @param extractorName Имя экстрактора
+ * @param errors Ошибки при конвертации
+ * @returns Имя созданного файла
+ */
+export async function writeTransactionsToJson(
+  transactions: Transaction[],
+  filename: string,
+  extractorName: string,
+  errors: string,
+): Promise<string> {
+  const outputFilename = filename.endsWith(".json") ? filename : `${filename}.json`;
+  const jsonContent = transactionsToJson(transactions, extractorName, errors);
+  await fs.writeFile(outputFilename, jsonContent, "utf-8");
 
   return outputFilename;
 }

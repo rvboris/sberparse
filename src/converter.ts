@@ -7,37 +7,23 @@ import { determineExtractorAuto, determineExtractorByName } from "./extractor-se
 import { writeTransactionsToJson } from "./json-writer.js";
 import { logger } from "./logger.js";
 import { pdfToText } from "./pdf-parser.js";
-import type { CLIOptions, ExtractorResult } from "./types.js";
+import type { CLIOptions, ExtractorResult, ParseOptions } from "./types.js";
 
-/**
- * Конвертирует PDF файл в JSON/CSV
- * @param inputFileName Путь к входному PDF файлу
- * @param options Опции CLI
- * @returns Информация о результате
- */
-export async function convertPdf(
-  inputFileName: string,
-  options: CLIOptions,
-): Promise<ExtractorResult> {
-  logger.info`${"*".repeat(30)}`;
-  logger.info`Конвертируем файл ${inputFileName}`;
+interface ResolvedParseOptions {
+  format?: string;
+  reverse: boolean;
+  balance_check: boolean;
+}
 
-  // Проверяем расширение
-  const ext = path.extname(inputFileName).toLowerCase();
-  if (ext !== ".pdf") {
-    throw new UserInputError(`Неподдерживаемое расширение файла: ${ext}`);
-  }
+function resolveParseOptions(options: ParseOptions = {}): ResolvedParseOptions {
+  return {
+    format: options.format,
+    reverse: options.reverse ?? false,
+    balance_check: options.balance_check ?? false,
+  };
+}
 
-  // Конвертируем PDF в текст
-  const bankText = await pdfToText(inputFileName);
-
-  // Сохраняем промежуточный файл, если запрошено
-  if (options.interm) {
-    const txtFileName = inputFileName.replace(/\.pdf$/i, ".txt");
-    await fs.writeFile(txtFileName, bankText, "utf-8");
-    logger.info`Сохранён промежуточный файл: ${txtFileName}`;
-  }
-
+function parseBankText(bankText: string, options: ResolvedParseOptions) {
   // Определяем экстрактор
   let extractorClass: ReturnType<typeof determineExtractorAuto>;
   if (options.format) {
@@ -86,6 +72,82 @@ export async function convertPdf(
   let finalTransactions = transactions;
   if (options.reverse) {
     finalTransactions = reverseTransactions(transactions);
+  }
+
+  return {
+    extractorClass,
+    extractor,
+    periodBalance,
+    columnsInfo,
+    error,
+    finalTransactions,
+  };
+}
+
+async function parsePdfText(inputFileName: string, options: ResolvedParseOptions) {
+  logger.info`${"*".repeat(30)}`;
+  logger.info`Конвертируем файл ${inputFileName}`;
+
+  // Проверяем расширение
+  const ext = path.extname(inputFileName).toLowerCase();
+  if (ext !== ".pdf") {
+    throw new UserInputError(`Неподдерживаемое расширение файла: ${ext}`);
+  }
+
+  const bankText = await pdfToText(inputFileName);
+  return { bankText, ...parseBankText(bankText, options) };
+}
+
+/**
+ * Парсит PDF файл и возвращает данные без записи в файл
+ * @param inputFileName Путь к входному PDF файлу
+ * @param options Опции парсинга
+ * @returns Информация о результате
+ */
+export async function parsePdf(
+  inputFileName: string,
+  options: ParseOptions = {},
+): Promise<ExtractorResult> {
+  const resolvedOptions = resolveParseOptions(options);
+  const { extractorClass, extractor, periodBalance, columnsInfo, error, finalTransactions } =
+    await parsePdfText(inputFileName, resolvedOptions);
+
+  return {
+    extractor_name: extractorClass.name,
+    transactions: finalTransactions,
+    period_balance: periodBalance.toNumber(),
+    balance_column: extractor.getColumnNameForBalanceCalculation(),
+    columns_info: columnsInfo,
+    errors: error,
+  };
+}
+
+/**
+ * Конвертирует PDF файл в JSON/CSV
+ * @param inputFileName Путь к входному PDF файлу
+ * @param options Опции CLI
+ * @returns Информация о результате
+ */
+export async function convertPdf(
+  inputFileName: string,
+  options: CLIOptions,
+): Promise<ExtractorResult> {
+  const resolvedOptions = resolveParseOptions(options);
+  const {
+    bankText,
+    extractorClass,
+    extractor,
+    periodBalance,
+    columnsInfo,
+    error,
+    finalTransactions,
+  } = await parsePdfText(inputFileName, resolvedOptions);
+
+  // Сохраняем промежуточный файл, если запрошено
+  if (options.interm) {
+    const txtFileName = inputFileName.replace(/\.pdf$/i, ".txt");
+    await fs.writeFile(txtFileName, bankText, "utf-8");
+    logger.info`Сохранён промежуточный файл: ${txtFileName}`;
   }
 
   // Определяем выходной файл

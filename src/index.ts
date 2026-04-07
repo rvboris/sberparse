@@ -1,4 +1,5 @@
-export { convertPdf } from "./converter.js";
+export { convertPdf, parsePdf } from "./converter.js";
+export { transactionsToCsv } from "./csv-writer.js";
 export {
   BalanceVerificationError,
   InputFileStructureError,
@@ -6,4 +7,5 @@ export {
   UserInputError,
 } from "./exceptions.js";
 export { Extractor } from "./extractor.js";
-export type { CLIOptions, ExtractorResult, Transaction } from "./types.js";
+export { transactionsToJson } from "./json-writer.js";
+export type { CLIOptions, ExtractorResult, ParseOptions, Transaction } from "./types.js";

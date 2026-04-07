@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Transaction } from "../src/types.js";
+import type { ParseOptions, Transaction } from "../src/types.js";
 
 describe("types", () => {
   it("supports Transaction shape", () => {
@@ -16,5 +16,15 @@ describe("types", () => {
     };
 
     expect(tx.value_account_currency).toBe(1);
+  });
+
+  it("supports ParseOptions shape", () => {
+    const options: ParseOptions = {
+      format: "SBER_DEBIT_2603",
+      reverse: true,
+      balance_check: false,
+    };
+
+    expect(options.reverse).toBe(true);
   });
 });

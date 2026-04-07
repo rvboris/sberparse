@@ -33,6 +33,25 @@ pnpm add -g @rvboris/sberparse
  sberparse ./vypiska.pdf --interm
 ```
 
+## Использование в коде
+
+```ts
+import { parsePdf, transactionsToCsv, transactionsToJson } from "@rvboris/sberparse";
+
+const result = await parsePdf("./vypiska.pdf", {
+  reverse: false,
+  balance_check: true,
+});
+
+const jsonText = transactionsToJson(
+  result.transactions,
+  result.extractor_name,
+  result.errors,
+);
+
+const csvText = transactionsToCsv(result.transactions, result.columns_info);
+```
+
 ## Поддерживаемые форматы
 
 - SBER_DEBIT_2603 - Дебетовая карта образца марта 2026

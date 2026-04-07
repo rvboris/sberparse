@@ -26,19 +26,24 @@ function escapeCsvValue(value: string | number | Date | undefined): string {
   return strValue;
 }
 
+interface CsvRenderOptions {
+  include_bom?: boolean;
+  trailing_newline?: boolean;
+}
+
 /**
- * Записывает транзакции в CSV файл
+ * Конвертирует транзакции в CSV строку
  * @param transactions Список транзакций
- * @param filename Имя файла (без расширения)
  * @param columnsInfo Информация о колонках
- * @returns Имя созданного файла
+ * @param options Параметры вывода
+ * @returns CSV строка
  */
-export async function writeTransactionsToCsv(
+export function transactionsToCsv(
   transactions: Transaction[],
-  filename: string,
   columnsInfo: Record<string, string>,
-): Promise<string> {
-  const outputFilename = filename.endsWith(".csv") ? filename : `${filename}.csv`;
+  options: CsvRenderOptions = {},
+): string {
+  const { include_bom = true, trailing_newline = true } = options;
 
   // Заголовки
   const headers = Object.keys(columnsInfo);
@@ -73,12 +78,28 @@ export async function writeTransactionsToCsv(
     dataRows.push(rowValues.join(";"));
   }
 
-  // Собираем CSV
   const csvContent = [headerRow, ...dataRows].join("\n");
+  const bom = include_bom ? "\uFEFF" : "";
+  const suffix = trailing_newline ? "\n" : "";
 
-  // Добавляем BOM для Excel
-  const bom = "\uFEFF";
-  await fs.writeFile(outputFilename, `${bom + csvContent}\n`, "utf-8");
+  return `${bom + csvContent}${suffix}`;
+}
+
+/**
+ * Записывает транзакции в CSV файл
+ * @param transactions Список транзакций
+ * @param filename Имя файла (без расширения)
+ * @param columnsInfo Информация о колонках
+ * @returns Имя созданного файла
+ */
+export async function writeTransactionsToCsv(
+  transactions: Transaction[],
+  filename: string,
+  columnsInfo: Record<string, string>,
+): Promise<string> {
+  const outputFilename = filename.endsWith(".csv") ? filename : `${filename}.csv`;
+  const csvContent = transactionsToCsv(transactions, columnsInfo);
+  await fs.writeFile(outputFilename, csvContent, "utf-8");
 
   return outputFilename;
 }
