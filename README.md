@@ -4,6 +4,8 @@
 
 ## Установка
 
+> Package note: requires Node.js 24+.
+
 ```bash
 pnpm add -g @rvboris/sberparse
 ```
@@ -26,14 +28,32 @@ pnpm add -g @rvboris/sberparse
 # Обратный порядок транзакций
  sberparse ./vypiska.pdf -r
 
-# Без проверки баланса
- sberparse ./vypiska.pdf -b
+# Игнорировать результаты сверки баланса
+ sberparse ./vypiska.pdf --no-balance-check
 
 # Сохранить промежуточный текстовый файл
  sberparse ./vypiska.pdf --interm
 ```
 
+### CLI entrypoints
+
+- dev/source run: `src/cli.ts`
+- oclif command: `src/commands/index.ts`
+- production bin: `dist/cli.js`
+
 ## Использование в коде
+
+Main named exports:
+- `parsePdf`
+- `convertPdf`
+- `transactionsToCsv`
+- `transactionsToJson`
+- `Extractor`
+- `BalanceVerificationError`
+- `InputFileStructureError`
+- `SberParseError`
+- `UserInputError`
+- types: `CLIOptions`, `ParseOptions`, `ExtractorResult`, `Transaction`
 
 ```ts
 import { parsePdf, transactionsToCsv, transactionsToJson } from "@rvboris/sberparse";
@@ -51,6 +71,15 @@ const jsonText = transactionsToJson(
 
 const csvText = transactionsToCsv(result.transactions, result.columns_info);
 ```
+
+### CLI flags
+
+- `-o, --output` — output file name without extension
+- `-f, --format` — force extractor selection
+- `-t, --type` — `json` or `csv`
+- `-r, --reverse` — reverse transactions order
+- `--balance-check` / `--no-balance-check` — enable/disable strict balance verification
+- `--interm` — save intermediate text output
 
 ## Поддерживаемые форматы
 

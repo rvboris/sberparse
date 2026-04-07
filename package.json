@@ -1,20 +1,26 @@
 {
   "name": "@rvboris/sberparse",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Конвертация выписок Сбербанка из PDF в JSON/CSV",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./cli": "./dist/cli.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "default": "./dist/cli.js"
+    }
   },
   "bin": {
     "sberparse": "./dist/cli.js"
   },
   "scripts": {
     "dev": "tsx src/cli.ts",
-    "build": "pnpm run test:run && pnpm run lint && pnpm run typecheck && tsc",
+    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
@@ -22,7 +28,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "lint:ci": "biome check .",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build"
   },
   "keywords": [
     "sberbank",
