@@ -38,3 +38,4 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           name: Vitest Coverage
+          vite-config-path: ./vitest.config.ts
