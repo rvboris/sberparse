@@ -1,0 +1,8 @@
+.planning
+.opencode
+.vscode
+dist
+coverage
+node_modules
+samples
+scripts

@@ -1,0 +1,72 @@
+{
+  "name": "@rvboris/sberparse",
+  "version": "1.0.0",
+  "description": "Конвертация выписок Сбербанка из PDF в JSON/CSV",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./cli": "./dist/cli.js"
+  },
+  "bin": {
+    "sberparse": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "pnpm run test:run && pnpm run lint && pnpm run typecheck && tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "lint:ci": "biome check .",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "sberbank",
+    "pdf",
+    "parser",
+    "csv",
+    "json",
+    "cli"
+  ],
+  "author": "rvboris",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@logtape/logtape": "^2.0.5",
+    "@logtape/pretty": "^2.0.5",
+    "@oclif/core": "^4.10.5",
+    "decimal.js": "^10.6.0",
+    "fast-csv": "^5.0.5",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.10",
+    "@types/node": "^25.5.2",
+    "@vitest/coverage-v8": "^4.1.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "oclif": {
+    "bin": "sberparse",
+    "commands": {
+      "strategy": "single",
+      "target": "./dist/commands/index.js"
+    }
+  },
+  "packageManager": "pnpm@10.30.2"
+}
