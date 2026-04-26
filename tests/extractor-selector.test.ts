@@ -9,6 +9,16 @@ import { SBER_DEBIT_2604 } from "../src/extractors/sber-debit-2604.js";
 const fixturesDir = path.join(process.cwd(), "tests", "fixtures");
 
 describe("extractor-selector", () => {
+  it("distinguishes March and April fixtures via quickCheck", async () => {
+    const marchText = await fs.readFile(path.join(fixturesDir, "payment-2603.txt"), "utf-8");
+    const aprilText = await fs.readFile(path.join(fixturesDir, "payment-2604.txt"), "utf-8");
+
+    expect(SBER_DEBIT_2603.quickCheck(marchText)).toBe(true);
+    expect(SBER_DEBIT_2603.quickCheck(aprilText)).toBe(false);
+    expect(SBER_DEBIT_2604.quickCheck(aprilText)).toBe(true);
+    expect(SBER_DEBIT_2604.quickCheck(marchText)).toBe(false);
+  });
+
   it("selects extractor by name", () => {
     expect(determineExtractorByName("SBER_DEBIT_2603")).toBe(SBER_DEBIT_2603);
     expect(determineExtractorByName("SBER_DEBIT_2604")).toBe(SBER_DEBIT_2604);

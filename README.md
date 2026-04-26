@@ -121,12 +121,6 @@ const csvText = transactionsToCsv(result.transactions, result.columns_info);
 
 Интегрированный release workflow остаётся в `.github/workflows/npm-publish.yml`, потому что именно это имя файла соответствует текущей настройке npm trusted publishing для пакета.
 
-### Почему проверка release PR живёт внутри `Release Please`
-
-Release PR создаётся GitHub Actions через `GITHUB_TOKEN`, поэтому GitHub не запускает обычный downstream `pull_request` workflow для такого bot-created PR.
-
-Из-за этого проверка release PR выполняется внутри самого `Release Please`, а не отдельным workflow по событию `pull_request`.
-
 ## Лицензия
 
 MIT

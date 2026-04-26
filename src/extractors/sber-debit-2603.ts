@@ -9,10 +9,17 @@ import { getDecimalFromMoney } from "../utils.js";
  */
 export class SBER_DEBIT_2603 extends Extractor {
   static quickCheck(text: string): boolean {
-    return (
+    const isSberStatement =
       /сбербанк/i.test(text) &&
       /Выписка по плат[её]жному сч[её]ту/i.test(text) &&
-      (/Расшифровка операций/i.test(text) || /ИТОГО ПО ОПЕРАЦИЯМ/i.test(text))
+      (/Расшифровка операций/i.test(text) || /ИТОГО ПО ОПЕРАЦИЯМ/i.test(text));
+    const hasMarchOperationLine =
+      /^\d{2}\.\d{2}\.\d{4}\s*\d{2}:\d{2}\s*\d{3,8}\s*[^\d\s].*?[+-]?\d[\d\s\u00a0]*,\d{2}\s*\d[\d\s\u00a0]*,\d{2}/m.test(
+        text,
+      );
+
+    return (
+      isSberStatement && hasMarchOperationLine
     );
   }
 
