@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.3...sberparse-v1.2.4) (2026-04-26)
+
+
+### Bug Fixes
+
+* **readme:** add Russian README ([59f35fa](https://github.com/rvboris/sberparse/commit/59f35fa292d33ce8570e59f9c1187b63906e31e2))
+
 ## [1.2.3](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.2...sberparse-v1.2.3) (2026-04-26)
 
 
