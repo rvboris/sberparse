@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.2...sberparse-v1.2.3) (2026-04-26)
+
+
+### Bug Fixes
+
+* keep npm trusted publish workflow name ([5e70fc0](https://github.com/rvboris/sberparse/commit/5e70fc03a8bafb6a4d85c79da0cc936c41b0d0b2))
+
 ## [1.2.2](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.1...sberparse-v1.2.2) (2026-04-26)
 
 
