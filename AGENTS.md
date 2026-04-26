@@ -206,7 +206,7 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 
 - `.github/workflows/release-please.yml`
   - запускается на `push` в `main`
-  - принудительно запускает JS action под Node 24 для совместимости с GitHub Actions runtime changes
+  - использует `release-please-action` с поддержкой Node 24
   - открывает/обновляет release PR
   - находит текущий open release PR branch и прогоняет `reusable-test.yml` в том же run
   - при merge release PR обновляет версию, `CHANGELOG.md` и создаёт GitHub Release
