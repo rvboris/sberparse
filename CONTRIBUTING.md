@@ -1,40 +1,38 @@
 # Contributing
 
-Thanks for contributing to `sberparse`.
-
-## Prerequisites
+## Требования
 
 - Node.js 24+
 - `pnpm`
 
-## Local Setup
+## Локальная настройка
 
 ```bash
 pnpm install
 ```
 
-Main development commands:
+Основные команды разработки:
 
-- `pnpm run dev` — run the CLI from source via `tsx`
-- `pnpm run build` — compile TypeScript to `dist/`
-- `pnpm run typecheck` — run TypeScript checks without emit
-- `pnpm run lint` — run Biome checks
-- `pnpm run lint:fix` — apply Biome fixes
-- `pnpm run test:run` — run tests once
-- `pnpm run test:coverage` — run tests with coverage
+- `pnpm run dev` — запуск CLI из исходников через `tsx`
+- `pnpm run build` — компиляция TypeScript в `dist/`
+- `pnpm run typecheck` — проверка TypeScript без emit
+- `pnpm run lint` — проверка Biome
+- `pnpm run lint:fix` — автоисправления Biome
+- `pnpm run test:run` — одиночный прогон тестов
+- `pnpm run test:coverage` — тесты с покрытием
 
-## Development Expectations
+## Ожидания к изменениям
 
-- Keep CLI behavior thin: `src/commands/index.ts` should pass options into core logic instead of duplicating business rules.
-- Preserve the library API so the package stays usable both as CLI and as an imported module.
-- Prefer small, focused changes over broad refactors.
+- CLI должен оставаться тонким: `src/commands/index.ts` должен прокидывать параметры в core-логику, а не дублировать бизнес-правила.
+- Библиотечный API должен оставаться пригодным как для CLI, так и для импортируемого использования.
+- Предпочтительны небольшие и сфокусированные изменения вместо широких рефакторингов.
 
-## Tests
+## Тесты
 
-- Add or update tests for every non-trivial parsing change.
-- Use fixture-based tests from `tests/fixtures/`.
-- Do not make CI depend on sample PDF files from `samples/`.
-- Before opening a PR, run:
+- Для каждого нетривиального изменения парсинга добавляй или обновляй тесты.
+- Используй fixture-based тесты из `tests/fixtures/`.
+- Не делай CI зависимым от sample PDF из `samples/`.
+- Перед открытием PR запускай:
 
 ```bash
 pnpm run test:run
@@ -42,52 +40,52 @@ pnpm run lint
 pnpm run typecheck
 ```
 
-## Extractor Changes
+## Изменения extractor-ов
 
-If you add or modify an extractor:
+Если ты добавляешь или меняешь extractor:
 
-- register it in the extractor list and selector flow;
-- add or update fixture files and extractor tests;
-- verify balance validation behavior;
-- verify masked card fragments such as `****1234` and technical trailing lines are preserved correctly.
+- зарегистрируй его в списке extractor-ов и selector flow;
+- добавь или обнови fixture-файлы и extractor tests;
+- проверь поведение balance validation;
+- проверь, что masked card fragments вроде `****1234` и технические хвосты документа сохраняются корректно.
 
-Current formats:
+Текущие форматы:
 
-- `SBER_DEBIT_2604` — current default format
-- `SBER_DEBIT_2603` — legacy March 2026 compatibility
+- `SBER_DEBIT_2604` — текущий формат по умолчанию
+- `SBER_DEBIT_2603` — legacy-совместимость для марта 2026
 
-## Public API and Packaging Changes
+## Изменения публичного API и упаковки
 
-If you change the package surface:
+Если меняется surface пакета:
 
-- update `src/index.ts`;
-- update `README.md`;
-- update `package.json` `exports` if needed.
+- обновляй `src/index.ts`;
+- обновляй `README.md`;
+- при необходимости обновляй `package.json` `exports`.
 
-The package is published as ESM and ships `dist`, `README.md`, and `LICENSE`.
+Пакет публикуется как ESM и поставляет `dist`, `README.md` и `LICENSE`.
 
-## Commit and Pull Request Rules
+## Правила commit и pull request
 
-- Use Conventional Commits such as `feat:`, `fix:`, `docs:`, `chore:`.
-- Keep PRs focused and explain user-visible behavior changes clearly.
-- Include test updates when parser behavior changes.
+- Используй Conventional Commits, например `feat:`, `fix:`, `docs:`, `chore:`.
+- Держи PR сфокусированными и ясно описывай пользовательские изменения.
+- Если меняется поведение парсера, добавляй и тестовые изменения.
 
-This repository uses `release-please`, so commit messages affect version bumps and changelog generation.
+Репозиторий использует `release-please`, поэтому commit messages влияют на version bump и генерацию changelog.
 
-## CI and Release Flow
+## CI и release flow
 
-- `.github/workflows/test.yml` runs on `pull_request` and delegates checks to `.github/workflows/reusable-test.yml`.
-- `.github/workflows/reusable-test.yml` runs install, typecheck, lint, tests, and coverage reporting.
-- `.github/workflows/npm-publish.yml` now contains the integrated release-please flow: release PRs, version updates, `CHANGELOG.md`, release-branch validation, and npm publishing in the same workflow when a release is created.
+- `.github/workflows/test.yml` запускается на `pull_request` и делегирует проверки в `.github/workflows/reusable-test.yml`.
+- `.github/workflows/reusable-test.yml` запускает install, typecheck, lint, tests и coverage reporting.
+- `.github/workflows/npm-publish.yml` содержит интегрированный flow `release-please`: release PR, обновление версии, `CHANGELOG.md`, валидацию release branch и публикацию в npm в том же workflow при создании релиза.
 
-Release guardrail:
+Публикационный guardrail:
 
 ```bash
 pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 ```
 
-## When in Doubt
+## Если сомневаешься
 
-- Follow existing project patterns.
-- Prefer updating tests and docs together with behavior changes.
-- Keep contributor-facing docs and release workflow notes in sync with the repository configuration.
+- Следуй существующим паттернам проекта.
+- Предпочитай обновлять тесты и документацию вместе с изменением поведения.
+- Держи contributor-facing docs и заметки о release workflow синхронизированными с конфигурацией репозитория.
