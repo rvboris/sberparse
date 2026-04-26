@@ -1,51 +1,53 @@
 # sberparse
 
-Convert Sberbank PDF statements into structured JSON or CSV.
+Конвертация PDF-выписок Сбербанка в структурированные JSON и CSV.
 
-## Installation
+Английская версия: [`README.en.md`](./README.en.md).
 
-> Requires Node.js 24+.
+## Установка
 
-For development and pull request guidelines, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+> Требуется Node.js 24+.
+
+Правила разработки и pull request описаны в [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ```bash
 pnpm add -g @rvboris/sberparse
 ```
 
-## Usage
+## Использование
 
 ```bash
-# Convert to CSV (default)
+# Конвертация в CSV (по умолчанию)
 sberparse ./statement.pdf
 
-# Convert to JSON
+# Конвертация в JSON
 sberparse ./statement.pdf -t json
 
-# Write to a specific output name
+# Запись в конкретное имя выходного файла
 sberparse ./statement.pdf -o ./output/my-extract
 
-# Force a specific extractor (skip auto-detect)
+# Принудительный выбор extractor-а без автоопределения
 sberparse ./statement.pdf -f SBER_DEBIT_2604
 
-# Reverse transaction order
+# Обратный порядок транзакций
 sberparse ./statement.pdf -r
 
-# Skip strict balance verification
+# Отключить строгую проверку баланса
 sberparse ./statement.pdf --no-balance-check
 
-# Save the intermediate extracted text file
+# Сохранить промежуточный текстовый файл
 sberparse ./statement.pdf --interm
 ```
 
-### CLI Entrypoints
+### Точки входа CLI
 
-- dev/source run: `src/cli.ts`
-- oclif command: `src/commands/index.ts`
+- запуск из исходников: `src/cli.ts`
+- команда oclif: `src/commands/index.ts`
 - production bin: `dist/cli.js`
 
-## Library Usage
+## Использование как библиотеки
 
-Main named exports:
+Основные именованные экспорты:
 
 - `parsePdf`
 - `convertPdf`
@@ -56,7 +58,7 @@ Main named exports:
 - `InputFileStructureError`
 - `SberParseError`
 - `UserInputError`
-- types: `CLIOptions`, `ParseOptions`, `ExtractorResult`, `Transaction`
+- типы: `CLIOptions`, `ParseOptions`, `ExtractorResult`, `Transaction`
 
 ```ts
 import { parsePdf, transactionsToCsv, transactionsToJson } from "@rvboris/sberparse";
@@ -75,56 +77,56 @@ const jsonText = transactionsToJson(
 const csvText = transactionsToCsv(result.transactions, result.columns_info);
 ```
 
-### CLI Flags
+### Флаги CLI
 
-- `-o, --output` — output file name without extension
-- `-f, --format` — force extractor selection
-- `-t, --type` — `json` or `csv`
-- `-r, --reverse` — reverse transaction order
-- `--balance-check` / `--no-balance-check` — enable or disable strict balance verification
-- `--interm` — save intermediate text output
+- `-o, --output` — имя выходного файла без расширения
+- `-f, --format` — принудительный выбор extractor-а
+- `-t, --type` — `json` или `csv`
+- `-r, --reverse` — развернуть порядок транзакций
+- `--balance-check` / `--no-balance-check` — включить или отключить строгую проверку баланса
+- `--interm` — сохранить промежуточный текст
 
-## Supported Formats
+## Поддерживаемые форматы
 
-- `SBER_DEBIT_2604` — April 2026 debit statement format, current default
-- `SBER_DEBIT_2603` — March 2026 debit statement format, legacy compatibility
+- `SBER_DEBIT_2604` — формат дебетовой выписки апреля 2026, текущий по умолчанию
+- `SBER_DEBIT_2603` — формат дебетовой выписки марта 2026, legacy-совместимость
 
-## CI/CD and Workflows
+## CI/CD и workflow
 
-The repository uses two main GitHub Actions entry workflows:
+В репозитории есть два основных входных workflow GitHub Actions:
 
-- `Test` — runs on `pull_request` and delegates checks to the reusable test workflow
-- `Release Please` — implemented in `.github/workflows/npm-publish.yml`; runs on `push` to `main`, manages the release PR, validates release branches and release commits, creates the GitHub Release, and publishes the package to npm in the same workflow run
+- `Test` — запускается на `pull_request` и делегирует проверки в reusable test workflow
+- `Release Please` — реализован в `.github/workflows/npm-publish.yml`; запускается на `push` в `main`, ведёт release PR, валидирует release branch и release commit, создаёт GitHub Release и публикует пакет в npm в том же workflow run
 
-Shared validation lives in `.github/workflows/reusable-test.yml`:
+Общие проверки вынесены в `.github/workflows/reusable-test.yml`:
 
 - `pnpm install --frozen-lockfile`
 - `pnpm run typecheck`
 - `pnpm run lint:ci`
 - `pnpm run test:coverage`
-- coverage summary publication
+- публикация summary по coverage
 
-## Release Flow
+## Как работает релиз
 
-Releases are automated with `release-please`.
+Релизы автоматизированы через `release-please`.
 
-1. Changes land in `main` with Conventional Commits such as `feat:`, `fix:`, and `chore:`.
-2. The `Release Please` workflow opens or updates the release PR.
-3. The release PR updates:
-   - `package.json` version
+1. Изменения попадают в `main` с Conventional Commits, например `feat:`, `fix:` и `chore:`.
+2. Workflow `Release Please` открывает или обновляет release PR.
+3. В release PR обновляются:
+   - версия в `package.json`
    - `CHANGELOG.md`
-4. The same workflow finds the current release branch and validates it through the reusable test workflow.
-5. After the release PR is merged, `release-please` creates the GitHub Release.
-6. If a release is created in that run, the same workflow validates the release commit, builds the package, and publishes it to npm with provenance.
+4. Тот же workflow находит текущую release branch и валидирует её через reusable test workflow.
+5. После merge release PR `release-please` создаёт GitHub Release.
+6. Если релиз создан в этом run, тот же workflow валидирует release commit, собирает пакет и публикует его в npm с provenance.
 
-The integrated release workflow remains in `.github/workflows/npm-publish.yml` so it keeps matching the npm trusted publishing configuration for this package.
+Интегрированный release workflow остаётся в `.github/workflows/npm-publish.yml`, потому что именно это имя файла соответствует текущей настройке npm trusted publishing для пакета.
 
-### Why Release PR Validation Lives in `Release Please`
+### Почему проверка release PR живёт внутри `Release Please`
 
-The release PR is created by GitHub Actions through `GITHUB_TOKEN`, so GitHub does not emit a normal downstream `pull_request` workflow run for that bot-created PR.
+Release PR создаётся GitHub Actions через `GITHUB_TOKEN`, поэтому GitHub не запускает обычный downstream `pull_request` workflow для такого bot-created PR.
 
-Because of that, release PR validation is handled inside `Release Please` itself instead of relying on a separate workflow triggered from the PR event.
+Из-за этого проверка release PR выполняется внутри самого `Release Please`, а не отдельным workflow по событию `pull_request`.
 
-## License
+## Лицензия
 
 MIT
