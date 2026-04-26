@@ -188,6 +188,10 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 ### Workflows
 
 - `.github/workflows/test.yml`
+  - запускается на `pull_request`
+  - делегирует фактические проверки в reusable workflow
+
+- `.github/workflows/reusable-test.yml`
   - `pnpm install --frozen-lockfile`
   - `pnpm run typecheck`
   - `pnpm run lint:ci`
@@ -196,13 +200,14 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 
 - `.github/workflows/npm-publish.yml`
   - запускается по `release.created`
-  - переиспользует `test.yml`
+  - переиспользует `reusable-test.yml`
   - затем выполняет `pnpm run build`
   - публикует пакет в npm с `--provenance`
 
 - `.github/workflows/release-please.yml`
   - запускается на `push` в `main`
   - открывает/обновляет release PR
+  - прогоняет `reusable-test.yml` для release PR branch в том же run
   - при merge release PR обновляет версию, `CHANGELOG.md` и создаёт GitHub Release
 
 ## Packaging
@@ -235,6 +240,7 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 
 - Если меняется publish/CI-логика, проверять:
   - `test.yml`
+  - `reusable-test.yml`
   - `npm-publish.yml`
   - `release-please.yml`
   - `package.json` scripts

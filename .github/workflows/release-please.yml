@@ -16,10 +16,24 @@ concurrency:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      prs_created: ${{ steps.release.outputs.prs_created }}
+      pr: ${{ steps.release.outputs.pr }}
     steps:
       - name: Run release-please
+        id: release
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  test-release-pr:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.prs_created == 'true' }}
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      ref: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+    permissions:
+      contents: read
+      pull-requests: write
