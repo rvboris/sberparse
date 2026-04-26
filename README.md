@@ -47,19 +47,6 @@ sberparse ./statement.pdf --interm
 
 ## Использование как библиотеки
 
-Основные именованные экспорты:
-
-- `parsePdf`
-- `convertPdf`
-- `transactionsToCsv`
-- `transactionsToJson`
-- `Extractor`
-- `BalanceVerificationError`
-- `InputFileStructureError`
-- `SberParseError`
-- `UserInputError`
-- типы: `CLIOptions`, `ParseOptions`, `ExtractorResult`, `Transaction`
-
 ```ts
 import { parsePdf, transactionsToCsv, transactionsToJson } from "@rvboris/sberparse";
 

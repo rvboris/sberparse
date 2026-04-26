@@ -207,6 +207,14 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
   - затем в том же workflow выполняет `pnpm run build` и публикует пакет в npm с `--provenance`
   - при merge release PR обновляет версию, `CHANGELOG.md`, создаёт GitHub Release и завершает npm publish без отдельного downstream workflow
 
+## Release Process
+
+- **Version check first:** Перед подготовкой нового релиза всегда проверять актуальную версию в remote-репозитории и package metadata. После `git fetch` сверять GitHub releases/tags и локальное состояние `package.json` / `.release-please-manifest.json`, чтобы не релизить из устаревшей версии.
+- **Do not bump locally:** Для обычных релизов не редактировать вручную `package.json`, `.release-please-manifest.json` и `CHANGELOG.md`. Нужно коммитить фактическое изменение кода или документации с Conventional Commit (`fix:`, `feat:` и т.д.) и пушить его в `main`.
+- **Release Please flow:** Пуш в `main` запускает GitHub Actions workflow `.github/workflows/npm-publish.yml`. `release-please` открывает или обновляет release PR обратно в `main` из ветки `release-please--branches--main--components--sberparse`, где обновляет версию, `CHANGELOG.md` и `.release-please-manifest.json`.
+- **Publish after merge:** Merge release PR создаёт GitHub release/tag и запускает publish job в том же workflow. Не создавать вручную release tags или GitHub Releases, если автоматизация не сломалась и пользователь явно не одобрил ручной recovery.
+- **Verify with gh:** После подготовки релиза или merge release PR всегда проверять статус через GitHub CLI: смотреть release PR, workflow runs и итоговый release/tag командами вроде `gh pr view`, `gh run list`, `gh run watch`, `gh release list` и `gh release view`.
+
 ## Packaging
 
 - пакет публикуется как ESM (`"type": "module"`)

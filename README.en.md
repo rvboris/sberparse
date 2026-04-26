@@ -47,19 +47,6 @@ sberparse ./statement.pdf --interm
 
 ## Library Usage
 
-Main named exports:
-
-- `parsePdf`
-- `convertPdf`
-- `transactionsToCsv`
-- `transactionsToJson`
-- `Extractor`
-- `BalanceVerificationError`
-- `InputFileStructureError`
-- `SberParseError`
-- `UserInputError`
-- types: `CLIOptions`, `ParseOptions`, `ExtractorResult`, `Transaction`
-
 ```ts
 import { parsePdf, transactionsToCsv, transactionsToJson } from "@rvboris/sberparse";
 
