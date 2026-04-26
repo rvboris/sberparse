@@ -9,7 +9,7 @@ vi.mock("../src/pdf-parser.js", async () => {
   const actual =
     await vi.importActual<typeof import("../src/pdf-parser.js")>("../src/pdf-parser.js");
   const fixturesDir = path.join(process.cwd(), "tests", "fixtures");
-  const text = await fs.readFile(path.join(fixturesDir, "payment-2603.txt"), "utf-8");
+  const text = await fs.readFile(path.join(fixturesDir, "payment-2604.txt"), "utf-8");
   return {
     ...actual,
     pdfToText: async () => text,
@@ -35,13 +35,13 @@ describe("converter", () => {
 
     const content = await fs.readFile(outputFile, "utf-8");
     expect(JSON.parse(content)).toHaveProperty("metadata");
-    expect(result.extractor_name).toBe("SBER_DEBIT_2603");
+    expect(result.extractor_name).toBe("SBER_DEBIT_2604");
   });
 
   it("parses PDF without writing files", async () => {
     const result = await parsePdf("fake.pdf", { balance_check: true });
 
-    expect(result.extractor_name).toBe("SBER_DEBIT_2603");
+    expect(result.extractor_name).toBe("SBER_DEBIT_2604");
     expect(result.transactions.length).toBeGreaterThan(0);
   });
 });

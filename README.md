@@ -23,7 +23,7 @@ pnpm add -g @rvboris/sberparse
  sberparse ./vypiska.pdf -o ./output/my-extract
 
 # Принудительный формат (skip auto-detect)
- sberparse ./vypiska.pdf -f SBER_DEBIT_2603
+ sberparse ./vypiska.pdf -f SBER_DEBIT_2604
 
 # Обратный порядок транзакций
  sberparse ./vypiska.pdf -r
@@ -83,6 +83,7 @@ const csvText = transactionsToCsv(result.transactions, result.columns_info);
 
 ## Поддерживаемые форматы
 
+- SBER_DEBIT_2604 - Дебетовая карта образца апреля 2026 (текущий формат)
 - SBER_DEBIT_2603 - Дебетовая карта образца марта 2026
 
 ## Лицензия

@@ -20,7 +20,7 @@ describe("types", () => {
 
   it("supports ParseOptions shape", () => {
     const options: ParseOptions = {
-      format: "SBER_DEBIT_2603",
+      format: "SBER_DEBIT_2604",
       reverse: true,
       balance_check: false,
     };
