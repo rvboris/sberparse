@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.6...sberparse-v1.2.7) (2026-04-26)
+
+
+### Bug Fixes
+
+* sync release and README docs ([394120a](https://github.com/rvboris/sberparse/commit/394120aabebfa604caac377d72fcd6ef0f090de6))
+
 ## [1.2.6](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.5...sberparse-v1.2.6) (2026-04-26)
 
 
