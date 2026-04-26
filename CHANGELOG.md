@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.4...sberparse-v1.2.5) (2026-04-26)
+
+
+### Bug Fixes
+
+* make statement quick checks format-specific ([1819eb3](https://github.com/rvboris/sberparse/commit/1819eb3af101da522beb20f1a35307b2f55cb62a))
+
 ## [1.2.4](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.3...sberparse-v1.2.4) (2026-04-26)
 
 
