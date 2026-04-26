@@ -198,7 +198,7 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
   - `pnpm run test:coverage`
   - публикация coverage summary
 
-- `.github/workflows/release-please.yml`
+- `.github/workflows/npm-publish.yml`
   - запускается на `push` в `main`
   - использует `release-please-action` с поддержкой Node 24
   - открывает/обновляет release PR
@@ -238,7 +238,7 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 - Если меняется publish/CI-логика, проверять:
   - `test.yml`
   - `reusable-test.yml`
-  - `release-please.yml`
+  - `npm-publish.yml`
   - `package.json` scripts
 
 - Если меняется release flow или changelog automation:

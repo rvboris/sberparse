@@ -94,7 +94,7 @@ const csvText = transactionsToCsv(result.transactions, result.columns_info);
 The repository uses two main GitHub Actions entry workflows:
 
 - `Test` — runs on `pull_request` and delegates checks to the reusable test workflow
-- `Release Please` — runs on `push` to `main`, manages the release PR, validates release branches and release commits, creates the GitHub Release, and publishes the package to npm in the same workflow run
+- `Release Please` — implemented in `.github/workflows/npm-publish.yml`; runs on `push` to `main`, manages the release PR, validates release branches and release commits, creates the GitHub Release, and publishes the package to npm in the same workflow run
 
 Shared validation lives in `.github/workflows/reusable-test.yml`:
 
@@ -116,6 +116,8 @@ Releases are automated with `release-please`.
 4. The same workflow finds the current release branch and validates it through the reusable test workflow.
 5. After the release PR is merged, `release-please` creates the GitHub Release.
 6. If a release is created in that run, the same workflow validates the release commit, builds the package, and publishes it to npm with provenance.
+
+The integrated release workflow remains in `.github/workflows/npm-publish.yml` so it keeps matching the npm trusted publishing configuration for this package.
 
 ### Why Release PR Validation Lives in `Release Please`
 

@@ -78,7 +78,7 @@ This repository uses `release-please`, so commit messages affect version bumps a
 
 - `.github/workflows/test.yml` runs on `pull_request` and delegates checks to `.github/workflows/reusable-test.yml`.
 - `.github/workflows/reusable-test.yml` runs install, typecheck, lint, tests, and coverage reporting.
-- `.github/workflows/release-please.yml` manages release PRs, version updates, `CHANGELOG.md`, release-branch validation, and npm publishing in the same workflow when a release is created.
+- `.github/workflows/npm-publish.yml` now contains the integrated release-please flow: release PRs, version updates, `CHANGELOG.md`, release-branch validation, and npm publishing in the same workflow when a release is created.
 
 Release guardrail:
 
