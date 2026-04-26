@@ -198,18 +198,14 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
   - `pnpm run test:coverage`
   - публикация coverage summary
 
-- `.github/workflows/npm-publish.yml`
-  - запускается по `release.created`
-  - переиспользует `reusable-test.yml`
-  - затем выполняет `pnpm run build`
-  - публикует пакет в npm с `--provenance`
-
 - `.github/workflows/release-please.yml`
   - запускается на `push` в `main`
   - использует `release-please-action` с поддержкой Node 24
   - открывает/обновляет release PR
   - находит текущий open release PR branch и прогоняет `reusable-test.yml` в том же run
-  - при merge release PR обновляет версию, `CHANGELOG.md` и создаёт GitHub Release
+  - при создании релиза прогоняет `reusable-test.yml` для release commit
+  - затем в том же workflow выполняет `pnpm run build` и публикует пакет в npm с `--provenance`
+  - при merge release PR обновляет версию, `CHANGELOG.md`, создаёт GitHub Release и завершает npm publish без отдельного downstream workflow
 
 ## Packaging
 
@@ -242,7 +238,6 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 - Если меняется publish/CI-логика, проверять:
   - `test.yml`
   - `reusable-test.yml`
-  - `npm-publish.yml`
   - `release-please.yml`
   - `package.json` scripts
 

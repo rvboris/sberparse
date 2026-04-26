@@ -1,10 +1,10 @@
 # sberparse
 
-Конвертация выписок Сбербанка из PDF в JSON/CSV формат.
+Convert Sberbank PDF statements into structured JSON or CSV.
 
-## Установка
+## Installation
 
-> Package note: requires Node.js 24+.
+> Requires Node.js 24+.
 
 For development and pull request guidelines, see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
@@ -12,40 +12,41 @@ For development and pull request guidelines, see [`CONTRIBUTING.md`](./CONTRIBUT
 pnpm add -g @rvboris/sberparse
 ```
 
-## Использование
+## Usage
 
 ```bash
-# Конвертация в CSV (по умолчанию)
- sberparse ./vypiska.pdf
+# Convert to CSV (default)
+sberparse ./statement.pdf
 
-# Конвертация в JSON
- sberparse ./vypiska.pdf -t json
+# Convert to JSON
+sberparse ./statement.pdf -t json
 
-# Указать конкретный выходной файл
- sberparse ./vypiska.pdf -o ./output/my-extract
+# Write to a specific output name
+sberparse ./statement.pdf -o ./output/my-extract
 
-# Принудительный формат (skip auto-detect)
- sberparse ./vypiska.pdf -f SBER_DEBIT_2604
+# Force a specific extractor (skip auto-detect)
+sberparse ./statement.pdf -f SBER_DEBIT_2604
 
-# Обратный порядок транзакций
- sberparse ./vypiska.pdf -r
+# Reverse transaction order
+sberparse ./statement.pdf -r
 
-# Игнорировать результаты сверки баланса
- sberparse ./vypiska.pdf --no-balance-check
+# Skip strict balance verification
+sberparse ./statement.pdf --no-balance-check
 
-# Сохранить промежуточный текстовый файл
- sberparse ./vypiska.pdf --interm
+# Save the intermediate extracted text file
+sberparse ./statement.pdf --interm
 ```
 
-### CLI entrypoints
+### CLI Entrypoints
 
 - dev/source run: `src/cli.ts`
 - oclif command: `src/commands/index.ts`
 - production bin: `dist/cli.js`
 
-## Использование в коде
+## Library Usage
 
 Main named exports:
+
 - `parsePdf`
 - `convertPdf`
 - `transactionsToCsv`
@@ -60,7 +61,7 @@ Main named exports:
 ```ts
 import { parsePdf, transactionsToCsv, transactionsToJson } from "@rvboris/sberparse";
 
-const result = await parsePdf("./vypiska.pdf", {
+const result = await parsePdf("./statement.pdf", {
   reverse: false,
   balance_check: true,
 });
@@ -74,58 +75,54 @@ const jsonText = transactionsToJson(
 const csvText = transactionsToCsv(result.transactions, result.columns_info);
 ```
 
-### CLI flags
+### CLI Flags
 
 - `-o, --output` — output file name without extension
 - `-f, --format` — force extractor selection
 - `-t, --type` — `json` or `csv`
-- `-r, --reverse` — reverse transactions order
-- `--balance-check` / `--no-balance-check` — enable/disable strict balance verification
+- `-r, --reverse` — reverse transaction order
+- `--balance-check` / `--no-balance-check` — enable or disable strict balance verification
 - `--interm` — save intermediate text output
 
-## Поддерживаемые форматы
+## Supported Formats
 
-- SBER_DEBIT_2604 - Дебетовая карта образца апреля 2026 (текущий формат)
-- SBER_DEBIT_2603 - Дебетовая карта образца марта 2026
+- `SBER_DEBIT_2604` — April 2026 debit statement format, current default
+- `SBER_DEBIT_2603` — March 2026 debit statement format, legacy compatibility
 
-## CI/CD и workflow
+## CI/CD and Workflows
 
-В репозитории используются три основных GitHub Actions workflow:
+The repository uses two main GitHub Actions entry workflows:
 
-- `Test` — запускается на `pull_request` и прогоняет проверки через reusable workflow.
-- `Release Please` — запускается на `push` в `main`, ведёт release PR, `CHANGELOG.md` и версию пакета.
-- `Publish to npm` — запускается на `release.created`, повторно прогоняет проверки, собирает пакет и публикует его в npm.
+- `Test` — runs on `pull_request` and delegates checks to the reusable test workflow
+- `Release Please` — runs on `push` to `main`, manages the release PR, validates release branches and release commits, creates the GitHub Release, and publishes the package to npm in the same workflow run
 
-Общие проверки вынесены в reusable workflow `.github/workflows/reusable-test.yml`:
+Shared validation lives in `.github/workflows/reusable-test.yml`:
 
 - `pnpm install --frozen-lockfile`
 - `pnpm run typecheck`
 - `pnpm run lint:ci`
 - `pnpm run test:coverage`
-- публикация coverage summary
+- coverage summary publication
 
-## Как работает релиз
+## Release Flow
 
-Релизы автоматизированы через `release-please`.
+Releases are automated with `release-please`.
 
-1. Изменения попадают в `main` с Conventional Commits (`feat:`, `fix:`, `chore:` и т.д.).
-2. Workflow `Release Please` открывает или обновляет release PR.
-3. В release PR автоматически обновляются:
+1. Changes land in `main` with Conventional Commits such as `feat:`, `fix:`, and `chore:`.
+2. The `Release Please` workflow opens or updates the release PR.
+3. The release PR updates:
    - `package.json` version
    - `CHANGELOG.md`
-4. После этого тот же workflow находит текущую release-ветку и прогоняет для неё reusable test workflow.
-5. После merge release PR `release-please` создаёт GitHub Release.
-6. Событие `release.created` запускает `Publish to npm`, который:
-   - повторно прогоняет проверки,
-   - выполняет `pnpm run build`,
-   - публикует пакет через `pnpm publish --provenance --access public`.
+4. The same workflow finds the current release branch and validates it through the reusable test workflow.
+5. After the release PR is merged, `release-please` creates the GitHub Release.
+6. If a release is created in that run, the same workflow validates the release commit, builds the package, and publishes it to npm with provenance.
 
-### Важная особенность release PR
+### Why Release PR Validation Lives in `Release Please`
 
-Release PR создаётся самим GitHub Actions workflow через `GITHUB_TOKEN`, поэтому стандартный `pull_request` workflow не получает отдельный check run на странице этого PR.
+The release PR is created by GitHub Actions through `GITHUB_TOKEN`, so GitHub does not emit a normal downstream `pull_request` workflow run for that bot-created PR.
 
-Из-за этого валидация release PR выполняется внутри самого workflow `Release Please`, а не отдельным downstream-trigger на событие `pull_request`.
+Because of that, release PR validation is handled inside `Release Please` itself instead of relying on a separate workflow triggered from the PR event.
 
-## Лицензия
+## License
 
 MIT
