@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.1...sberparse-v1.2.2) (2026-04-26)
+
+
+### Bug Fixes
+
+* publish npm from release workflow ([ec964b2](https://github.com/rvboris/sberparse/commit/ec964b2a2d9baecf4f1c49b5dff2c17068dfbcf5))
+
 ## [1.2.1](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.0...sberparse-v1.2.1) (2026-04-26)
 
 
