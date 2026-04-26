@@ -207,7 +207,7 @@ pnpm run test:run && pnpm run lint && pnpm run typecheck && pnpm run build
 - `.github/workflows/release-please.yml`
   - запускается на `push` в `main`
   - открывает/обновляет release PR
-  - прогоняет `reusable-test.yml` для release PR branch в том же run
+  - находит текущий open release PR branch и прогоняет `reusable-test.yml` в том же run
   - при merge release PR обновляет версию, `CHANGELOG.md` и создаёт GitHub Release
 
 ## Packaging

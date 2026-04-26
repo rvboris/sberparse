@@ -16,24 +16,48 @@ concurrency:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    outputs:
-      prs_created: ${{ steps.release.outputs.prs_created }}
-      pr: ${{ steps.release.outputs.pr }}
     steps:
       - name: Run release-please
-        id: release
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  test-release-pr:
+  resolve-release-pr:
     needs: release-please
-    if: ${{ needs.release-please.outputs.prs_created == 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      head_ref: ${{ steps.find.outputs.head_ref }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Find open release PR
+        id: find
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const prs = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              base: 'main',
+              per_page: 100,
+            });
+
+            const releasePr = prs.find((pr) =>
+              pr.head.ref.startsWith('release-please--branches--main')
+            );
+
+            core.setOutput('head_ref', releasePr?.head.ref ?? '');
+
+  test-release-pr:
+    needs: resolve-release-pr
+    if: ${{ needs.resolve-release-pr.outputs.head_ref != '' }}
     uses: ./.github/workflows/reusable-test.yml
     with:
-      ref: ${{ fromJSON(needs.release-please.outputs.pr).headBranchName }}
+      ref: ${{ needs.resolve-release-pr.outputs.head_ref }}
     permissions:
       contents: read
       pull-requests: write
