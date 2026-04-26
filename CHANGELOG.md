@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.5...sberparse-v1.2.6) (2026-04-26)
+
+
+### Bug Fixes
+
+* make contributing guide Russian ([7d4556d](https://github.com/rvboris/sberparse/commit/7d4556dd2c8e3e0a8965e83a585d2609f64f62bf))
+
 ## [1.2.5](https://github.com/rvboris/sberparse/compare/sberparse-v1.2.4...sberparse-v1.2.5) (2026-04-26)
 
 
